@@ -1,0 +1,16 @@
+{
+	"name": "voice-agent-frontend",
+	"private": true,
+	"type": "module",
+	"workspaces": [
+		"Dashboard",
+		"packages/*"
+	],
+	"scripts": {
+		"dev:dashboard": "npm run dev -w dashboard",
+		"build": "npm run build --workspaces --if-present",
+		"check": "npm run check --workspaces --if-present",
+		"lint": "npm run lint --workspaces --if-present",
+		"format": "npm run format --workspaces --if-present"
+	}
+}
