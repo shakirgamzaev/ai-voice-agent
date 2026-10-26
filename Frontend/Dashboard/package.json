@@ -14,7 +14,8 @@
 		"format": "prettier --write ."
 	},
 	"dependencies": {
-		"@voice-agent/ui": "*"
+		"@voice-agent/ui": "*",
+		"better-auth": "^1.7.13"
 	},
 	"devDependencies": {
 		"@eslint/js": "^10.0.1",
