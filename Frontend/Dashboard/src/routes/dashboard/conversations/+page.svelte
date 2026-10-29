@@ -2,6 +2,6 @@
 
 </script>
 
-<main class="grid grid-cols-[200px_200]">
-
+<main class="bg-amber-50 h-full">
+    <p>conversations</p>
 </main>

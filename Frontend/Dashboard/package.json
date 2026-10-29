@@ -14,6 +14,7 @@
 		"format": "prettier --write ."
 	},
 	"dependencies": {
+		"@lucide/svelte": "^1.64.0",
 		"@voice-agent/ui": "*",
 		"better-auth": "^1.7.13"
 	},

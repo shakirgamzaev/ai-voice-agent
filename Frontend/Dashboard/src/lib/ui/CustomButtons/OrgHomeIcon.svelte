@@ -1,5 +1,5 @@
 <script lang="ts">
-    import OrgHome from "./svgIcons/orgHome.svelte";
+    import OrgHome from "#lib/ui/svgIcons/orgHome.svelte";
 
     // Icon dimensions and per-side padding, all in px.
     // The box is a square whose side = tallest icon dimension + 2*padding.
