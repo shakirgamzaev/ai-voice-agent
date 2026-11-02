@@ -1,9 +1,24 @@
 <script lang="ts">
-    import { Inbox, LibraryBig } from "@lucide/svelte";
-    import SectionLink from "#lib/ui/CustomButtons/SectionLink.svelte";
+    import { Inbox, LibraryBig, ShieldCheck, Palette, Blocks, CreditCard } from "@lucide/svelte";
 	import OrgNameDropDown from "./OrgNameDropDown.svelte";
+    import LeftSideSection, { type SectionLinkProps } from "./LeftSideSection.svelte";
 
     let {children} = $props()
+
+    const customerSupportLinks: SectionLinkProps[] = [
+        { icon: Inbox, text: "Conversations", isSelected: true },
+        { icon: LibraryBig, text: "Knowledge Base" }
+    ];
+
+    const configurationLinks: SectionLinkProps[] = [
+        { icon: Palette, text: "Widget Customization" },
+        { icon: Blocks, text: "Integrations" },
+        { icon: ShieldCheck, text: "Voice Assistant"}
+    ];
+    const accountLinks: SectionLinkProps[] = [
+        {icon: CreditCard, text: "Plans & Billing"}
+    ]
+
 </script>
 
 <main class="grid grid-cols-[20rem_1fr] h-dvh">
@@ -11,23 +26,11 @@
     <div class="flex flex-col p-2 gap-8">
         <OrgNameDropDown></OrgNameDropDown>
 
-        <!--Customer support section -->
-        <div class="grid grid-cols-[1fr] gap-y-2">
-            <h2 class="text-[0.9rem] text-[#939393] pl-3">Customer support</h2>
+        <LeftSideSection title="Customer support" links={customerSupportLinks}></LeftSideSection>
 
-            <SectionLink icon={Inbox} iconSize={18} gap={0.8} text="Conversations" isSelected={true}></SectionLink>
+        <LeftSideSection title="Configuration" links={configurationLinks}></LeftSideSection>
 
-            <SectionLink icon={LibraryBig} iconSize={18} gap={0.8} text="Knowledge Base"></SectionLink>
-        </div>
-
-        <!--Configuration section-->
-        <div class="grid grid-cols-[1fr] gap-y-2">
-            <h2 class="text-[0.9rem] text-[#939393] pl-3">Configuration</h2>
-
-            <SectionLink icon={Inbox} iconSize={18} gap={0.8} text="Widget Customization"></SectionLink>
-
-            <SectionLink icon={LibraryBig} iconSize={18} gap={0.8} text="Knowledge Base"></SectionLink>
-        </div>
+        <LeftSideSection title="Account" links={accountLinks}></LeftSideSection>
     </div>
 
 
