@@ -1,7 +1,6 @@
 <script lang="ts">
-
 </script>
 
-<main class="bg-amber-50 h-full">
-    <p>conversations</p>
+<main class="h-full bg-amber-50">
+	<p>conversations</p>
 </main>
