@@ -4,12 +4,12 @@
     export type SectionLinkProps = {
         icon: LucideIcon;
         text: string;
-        isSelected?: boolean;
+        href: string
     };
 </script>
-
 <script lang="ts">
     import SectionLink from "#lib/ui/CustomButtons/SectionLink.svelte";
+    import { page } from "$app/state"
 
     type Props = {
         title: string;
@@ -22,7 +22,14 @@
 <div class="grid grid-cols-[1fr] gap-y-2">
     <h2 class="text-[0.9rem] text-[#939393] pl-3">{title}</h2>
 
-    {#each links as link (link.text)}
-        <SectionLink icon={link.icon} iconSize={18} gap={0.8} text={link.text} isSelected={link.isSelected}></SectionLink>
+    {#each links as link (link.href)}
+        <SectionLink
+            iconSize={18}
+            icon={link.icon}
+            gap={0.8}
+            text={link.text}
+            href={link.href}
+            isSelected={page.url.pathname.startsWith(link.href)}>
+        </SectionLink>
     {/each}
 </div>
