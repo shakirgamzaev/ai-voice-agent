@@ -16,7 +16,8 @@
 	"dependencies": {
 		"@lucide/svelte": "^1.64.0",
 		"@voice-agent/ui": "*",
-		"better-auth": "^1.7.13"
+		"better-auth": "^1.7.13",
+		"pg": "^8.23.1"
 	},
 	"devDependencies": {
 		"@eslint/js": "^10.0.1",
@@ -26,6 +27,7 @@
 		"@tailwindcss/typography": "^0.5.19",
 		"@tailwindcss/vite": "^4.3.0",
 		"@types/node": "^24",
+		"@types/pg": "^8.23.1",
 		"eslint": "^10.4.1",
 		"eslint-config-prettier": "^10.1.8",
 		"eslint-plugin-svelte": "^3.19.0",
