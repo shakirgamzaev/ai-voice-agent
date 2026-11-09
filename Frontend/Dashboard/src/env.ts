@@ -5,5 +5,8 @@ export const variables = defineEnvVars({
 		description: 'Postgres connection string used by Better Auth'
 	},
 	BETTER_AUTH_SECRET: {},
-	BETTER_AUTH_URL: {}
+	BETTER_AUTH_URL: {},
+	ENVIRONMENT: {
+		public: true
+	}
 });

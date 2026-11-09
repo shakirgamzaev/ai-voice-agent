@@ -17,5 +17,8 @@ export const auth = betterAuth({
         schemaName: "authentication", 
  	},
 	secret: BETTER_AUTH_SECRET,
-	baseURL: BETTER_AUTH_URL
+	baseURL: BETTER_AUTH_URL,
+	emailAndPassword: {
+		enabled: true
+	}
 });

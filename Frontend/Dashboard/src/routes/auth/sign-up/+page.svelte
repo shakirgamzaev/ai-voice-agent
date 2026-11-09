@@ -3,9 +3,37 @@
 	import GoogleButton from '#lib/ui/components/GoogleButton.svelte';
 	import TextField from '#lib/ui/components/TextField.svelte';
 	import { resolve } from '$app/paths';
+	import { goto } from '$app/navigation';
+	import { signUserUp } from '#lib/utils/auth/sign-up.ts';
+	import type { authClient } from '#lib/auth-client.ts';
 
-	function signUp() {
-		console.log('sign Up');
+	type AuthError = NonNullable<
+		Awaited<ReturnType<typeof authClient.signUp.email>>['error']
+	>;
+
+	let credentials = $state({
+		name: '',
+		email: '',
+		password: ''
+	});
+	let isError = $state<AuthError | null>(null);
+	let isAuthenticating = $state(false);
+
+	async function signUp() {
+		if (isAuthenticating) return;
+
+		isError = null;
+		isAuthenticating = true;
+		await new Promise<void>((resolve) => setTimeout(resolve, 1000));
+
+		try {
+			await signUserUp(credentials.name, credentials.email, credentials.password);
+			await goto(resolve('/dashboard/conversations'));
+		} catch (error) {
+			isError = error as AuthError;
+		} finally {
+			isAuthenticating = false;
+		}
 	}
 </script>
 
@@ -26,12 +54,21 @@
 			</div>
 		</div>
 		<div class="grid grid-cols-[1fr] gap-y-5">
-			<TextField text="Name" inputFieldType="text"></TextField>
-			<TextField text="Email" inputFieldType="email"></TextField>
-			<TextField text="Password" inputFieldType="password"></TextField>
+			<TextField text="Name" inputFieldType="text" bind:value={credentials.name}></TextField>
+			<TextField text="Email" inputFieldType="email" bind:value={credentials.email}></TextField>
+			<TextField text="Password" inputFieldType="password" bind:value={credentials.password}></TextField>
+			{#if isError}
+				<p role="alert" class="text-red-600">{isError.message ?? 'Sign-up failed. Please try again.'}</p>
+			{/if}
 		</div>
 		<div class="grid grid-cols-[1fr] gap-y-4">
-			<AuthButton text="Sign Up" authHandler={signUp} bgColor="#278256"></AuthButton>
+			<AuthButton 
+				text="Sign Up" 
+				authHandler={signUp} 
+				bgColor="#278256"
+				{isAuthenticating}
+				>
+				</AuthButton>
 			<div class="flex items-center justify-center gap-3 self-center">
 				<p>Already have an account?</p>
 				<a href={resolve('/auth/sign-in')} class="text-green-800">Sign in</a>
