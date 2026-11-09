@@ -2,6 +2,7 @@ import { auth } from "#lib/auth.js";
 import { svelteKitHandler } from "better-auth/svelte-kit";
 import { building } from "$app/env"; // SvelteKit 2: "$app/environment"
 import { redirect } from "@sveltejs/kit";
+import { ENVIRONMENT } from "$app/env/public"
 
 export async function handle({ event, resolve }) {
     const pathname = event.url.pathname;
@@ -11,7 +12,7 @@ export async function handle({ event, resolve }) {
         pathname.startsWith('/dashboard/');
 
     //intercept and check that a user's cookie has an active browser session. If the session is expired take him to the sign in page, else allow to proceed
-    if (!building && isDashboardRoute) {
+    if (!building && isDashboardRoute && ENVIRONMENT !== "dev") {
         const session = await auth.api.getSession({
             headers: event.request.headers
         });
