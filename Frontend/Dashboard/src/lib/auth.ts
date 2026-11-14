@@ -12,6 +12,7 @@ export const auth = betterAuth({
     	dialect: new PostgresDialect({
      	 pool: new Pool({
        		 connectionString: DATABASE_URL,
+			 connectionTimeoutMillis: 5000,
       	}),
     }	),
     	type: "postgres",

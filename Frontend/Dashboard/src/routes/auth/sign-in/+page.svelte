@@ -32,8 +32,6 @@
 		isError = null;
 		isAuthenticating = true
 		
-		//simulate network call
-		await new Promise<void>((resolve) => setTimeout(resolve, 1000));
 		
 		try {
 			await signUserIn(credentials.email, credentials.password);

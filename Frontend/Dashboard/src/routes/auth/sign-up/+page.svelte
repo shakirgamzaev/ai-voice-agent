@@ -24,7 +24,7 @@
 
 		isError = null;
 		isAuthenticating = true;
-		await new Promise<void>((resolve) => setTimeout(resolve, 1000));
+		
 
 		try {
 			await signUserUp(credentials.name, credentials.email, credentials.password);
