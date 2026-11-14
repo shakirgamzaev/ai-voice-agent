@@ -8,5 +8,13 @@ export const variables = defineEnvVars({
 	BETTER_AUTH_URL: {},
 	ENVIRONMENT: {
 		public: true
+	},
+	AWS_REGION:{
+		schema: (value) => {
+			if (typeof value !== "string" || value.trim() === "") {
+				throw new Error("AWS_REGION must be a non empty string")
+			}
+			return value.trim()
+		}
 	}
 });

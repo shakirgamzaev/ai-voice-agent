@@ -7,5 +7,5 @@
         <input type="checkbox" class="w-4 h-4"/>
         <p>Remember me</p>
     </div>
-	<a href={resolve('/auth/sign-in')}>Forgot Password?</a>
+	<a href={resolve('/auth/forgot-password')}>Forgot Password?</a>
 </div>

@@ -5,6 +5,7 @@ import { DATABASE_URL,
 		BETTER_AUTH_URL 
 } from "$app/env/private"
 import { PostgresDialect } from "kysely";
+import { sendPasswordResetEmail } from './server/sendPasswordResetEmail';
 
 export const auth = betterAuth({
 	database: {
@@ -19,6 +20,14 @@ export const auth = betterAuth({
 	secret: BETTER_AUTH_SECRET,
 	baseURL: BETTER_AUTH_URL,
 	emailAndPassword: {
-		enabled: true
+		enabled: true,
+		revokeSessionsOnPasswordReset: true,
+		sendResetPassword: async ({user, url}, request) => {
+			await sendPasswordResetEmail(
+				user.email, 
+				url, 
+				"mail@shakmira.com"
+			)
+		}
 	}
 });

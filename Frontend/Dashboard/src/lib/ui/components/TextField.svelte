@@ -6,7 +6,6 @@
 	}: { text: string; inputFieldType: string; value?: string } = $props();
 
 	
-
 </script>
 
 <div class="flex w-full flex-col items-start gap-1.5">

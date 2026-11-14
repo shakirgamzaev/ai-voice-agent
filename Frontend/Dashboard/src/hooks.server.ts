@@ -12,7 +12,7 @@ export async function handle({ event, resolve }) {
         pathname.startsWith('/dashboard/');
 
     //intercept and check that a user's cookie has an active browser session. If the session is expired take him to the sign in page, else allow to proceed
-    if (!building && isDashboardRoute && ENVIRONMENT !== "dev") {
+    if (!building && isDashboardRoute) {
         const session = await auth.api.getSession({
             headers: event.request.headers
         });
