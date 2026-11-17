@@ -7,7 +7,9 @@ authors = [
     { name = "Shakir Gamzaev", email = "shkir100@gmail.com" }
 ]
 requires-python = ">=3.14"
-dependencies = []
+dependencies = [
+    "fastapi[standard]>=0.163.2",
+]
 
 [project.scripts]
 backend = "backend:main"

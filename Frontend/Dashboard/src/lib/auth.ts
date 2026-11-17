@@ -1,4 +1,5 @@
 import { betterAuth } from 'better-auth';
+import { organization } from 'better-auth/plugins';
 import { Pool } from 'pg';
 import { DATABASE_URL, 
 		BETTER_AUTH_SECRET,
@@ -7,7 +8,11 @@ import { DATABASE_URL,
 import { PostgresDialect } from "kysely";
 import { sendPasswordResetEmail } from './server/sendPasswordResetEmail';
 
+
 export const auth = betterAuth({
+	plugins: [
+		organization()
+	],
 	database: {
     	dialect: new PostgresDialect({
      	 pool: new Pool({
