@@ -3,7 +3,7 @@
 	import UploadButton from "./components/UploadButton.svelte";
 
     function uploadOrgImage() {
-
+        
     }
 
 </script>

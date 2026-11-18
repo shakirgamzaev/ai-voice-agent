@@ -5,7 +5,7 @@
 	import { resolve } from '$app/paths';
 	import BottomSection from './BottomSection.svelte';
 	import { signUserIn } from '#lib/utils/auth/sign-in.ts';
-	import type { authClient } from '#lib/auth-client.ts';
+	import { authClient } from '#lib/auth-client.ts';
 	import { goto } from '$app/navigation';
 	import { ENVIRONMENT } from "$app/env/public"
 	type AuthError = NonNullable<
@@ -35,6 +35,17 @@
 		
 		try {
 			await signUserIn(credentials.email, credentials.password);
+			const {data, error} = await authClient.organization.list()
+
+			if (error) {
+				throw error
+			}
+			//if the user already created an account but abandoned the organization creation, then take him to the onboard page. 
+			else if (!data || data.length === 0) {
+				await goto(resolve("/onboard"))
+				return
+			}
+			//else if organization was created, and the code verified that the user belongs to an organizaiton, then take him to the organization
 			await goto(resolve("/dashboard/conversations"))
 		} catch (error) {
 			isError = error as AuthError;

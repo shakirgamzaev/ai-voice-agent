@@ -25,7 +25,7 @@
 	];
 </script>
 
-<main class="grid h-dvh grid-cols-[20rem_1fr]">
+<main class="grid h-dvh grid-cols-[20rem_2px_1fr]">
 	<!--Left section, (wraps all dashboard routes)-->
 	<div class="flex flex-col gap-8 p-2">
 		<OrgNameDropDown></OrgNameDropDown>
@@ -36,7 +36,7 @@
 
 		<LeftSideSection title="Account" links={accountLinks}></LeftSideSection>
 	</div>
-
+	<div class="bg-gray-200"></div>
 	<!-- Right section where each custom route is displayed -->
 	<div class="">
 		{@render children()}
