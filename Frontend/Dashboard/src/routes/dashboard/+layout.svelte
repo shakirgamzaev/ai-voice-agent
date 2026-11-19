@@ -2,8 +2,11 @@
 	import { Inbox, LibraryBig, ShieldCheck, Palette, Blocks, CreditCard } from '@lucide/svelte';
 	import OrgNameDropDown from './OrgNameDropDown.svelte';
 	import LeftSideSection, { type SectionLinkProps } from './LeftSideSection.svelte';
+	import type { LayoutProps } from './$types';
+	
 
-	let { children } = $props();
+
+	let { children, data }: LayoutProps = $props();
 	const dashboardPrefix = '/dashboard';
 
 	const customerSupportLinks: SectionLinkProps[] = [
@@ -28,7 +31,8 @@
 <main class="grid h-dvh grid-cols-[20rem_2px_1fr]">
 	<!--Left section, (wraps all dashboard routes)-->
 	<div class="flex flex-col gap-8 p-2">
-		<OrgNameDropDown></OrgNameDropDown>
+		
+		<OrgNameDropDown organizationName={data.organization.name} userName={data.user.name} email={data.user.email}></OrgNameDropDown>
 
 		<LeftSideSection title="Customer support" links={customerSupportLinks}></LeftSideSection>
 
@@ -38,7 +42,7 @@
 	</div>
 	<div class="bg-gray-200"></div>
 	<!-- Right section where each custom route is displayed -->
-	<div class="">
+	<div>
 		{@render children()}
 	</div>
 </main>

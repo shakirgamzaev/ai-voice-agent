@@ -28,7 +28,7 @@
 
 		try {
 			await signUserUp(credentials.name, credentials.email, credentials.password);
-			await goto(resolve('/dashboard/conversations'));
+			await goto(resolve('/onboard'));
 		} catch (error) {
 			isError = error as AuthError;
 		} finally {
