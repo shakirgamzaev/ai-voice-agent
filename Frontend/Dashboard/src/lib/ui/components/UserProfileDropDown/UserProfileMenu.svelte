@@ -1,6 +1,6 @@
 <script lang="ts">
 	import ProfileCircleIcon from '#lib/ui/icons/ProfileCircleIcon.svelte';
-	import UserProfileDrowDown from './UserProfileDrowDown.svelte';
+	import UserProfileDropDown from './UserProfileDropDown.svelte';
 
 	let { userName, email }: { userName: string; email: string } = $props();
 
@@ -21,6 +21,6 @@
 	</button>
 
 	{#if showUserProfileDropDown}
-		<UserProfileDrowDown {userName} {email}></UserProfileDrowDown>
+		<UserProfileDropDown {userName} {email}></UserProfileDropDown>
 	{/if}
 </div>

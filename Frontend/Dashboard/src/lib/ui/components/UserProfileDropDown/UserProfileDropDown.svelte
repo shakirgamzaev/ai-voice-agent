@@ -35,7 +35,6 @@
         </div>
     </div>
 
-
     <UserProfileBtn icon={Settings} iconSize={18} text="Manage Account" handler={manageAccount}></UserProfileBtn>
     <UserProfileBtn icon={LogOut} iconSize={18} text="Sign Out" handler={logOut}></UserProfileBtn>
 

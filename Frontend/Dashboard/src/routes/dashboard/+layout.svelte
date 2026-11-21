@@ -30,9 +30,9 @@
 
 <main class="grid h-dvh grid-cols-[20rem_2px_1fr]">
 	<!--Left section, (wraps all dashboard routes)-->
-	<div class="flex flex-col gap-8 p-2">
+	<div class="flex flex-col gap-8 p-2.5">
 		
-		<OrgNameDropDown organizationName={data.organization.name} userName={data.user.name} email={data.user.email}></OrgNameDropDown>
+		<OrgNameDropDown organizationName={data.organization.name} userName={data.user.name} email={data.user.email} role={data.role}></OrgNameDropDown>
 
 		<LeftSideSection title="Customer support" links={customerSupportLinks}></LeftSideSection>
 

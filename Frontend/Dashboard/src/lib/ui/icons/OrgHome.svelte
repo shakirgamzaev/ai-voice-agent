@@ -1,5 +1,7 @@
 <script lang="ts">
 	let { width, height }: { width: number; height: number } = $props();
+	// Unique per instance, so two icons on one page don't share a mask.
+	const uid = $props.id();
 
 	const housePath = $derived(
 		`M0 0 L${width} 0 L${width} ${height} L${width * 0.7} ${height} V${height * 0.68} H${width * 0.3} V${height} H0 Z`
@@ -19,7 +21,7 @@
 
 <svg xmlns="http://www.w3.org/2000/svg" {width} {height}>
 	<defs>
-		<mask id="house-windows">
+		<mask id="{uid}-windows">
 			<path d={housePath} fill="white" />
 			{#each windows as w (`${w.x},${w.y}`)}
 				<rect x={w.x} y={w.y} width={win} height={win} fill="black" />
@@ -27,5 +29,5 @@
 		</mask>
 	</defs>
 
-	<path d={housePath} fill="white" mask="url(#house-windows)" />
+	<path d={housePath} fill="white" mask="url(#{uid}-windows)" />
 </svg>

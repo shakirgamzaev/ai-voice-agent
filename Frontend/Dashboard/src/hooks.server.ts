@@ -3,6 +3,15 @@ import { svelteKitHandler } from "better-auth/svelte-kit";
 import { building } from "$app/env"; 
 import { redirect } from "@sveltejs/kit";
 
+// The signed-in user's role in the given organization, e.g. "owner", "admin" or "member".
+async function getOrganizationRole(headers: Headers, organizationId: string) {
+    const { role } = await auth.api.getActiveMemberRole({
+        headers,
+        query: { organizationId }
+    });
+    return role;
+}
+
 export async function handle({ event, resolve }) {
     // Match on the resolved route, not the raw URL: an encoded path such as /%64ashboard
     // still resolves to /dashboard but would slip past a pathname string check.
@@ -39,10 +48,16 @@ export async function handle({ event, resolve }) {
             redirect(303, '/dashboard/conversations');
         }
 
-        event.locals.user = session.user;
-        event.locals.organization =
+        const organization =
             userOrganizations.find((org) => org.id === session.session.activeOrganizationId) ??
             userOrganizations[0];
+
+        event.locals.user = session.user;
+        event.locals.organization = organization;
+        // The onboard page is reached without an organization, so there is no role to look up.
+        if (organization) {
+            event.locals.role = await getOrganizationRole(event.request.headers, organization.id);
+        }
     }
     
     return svelteKitHandler({ event, resolve, auth, building });

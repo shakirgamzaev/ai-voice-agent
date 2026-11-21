@@ -12,6 +12,7 @@ declare global {
 		interface Locals {
 			user?: typeof auth.$Infer.Session.user;
             organization?: typeof auth.$Infer.Organization;
+            role?: string;
         }
 	}
 }
