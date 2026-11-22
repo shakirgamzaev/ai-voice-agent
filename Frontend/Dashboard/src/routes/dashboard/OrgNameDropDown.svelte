@@ -31,7 +31,7 @@
 			</div>
 		</button>
 		{#if isOpenOrgDropDown}
-			<OrgNameDropDownDetail {organizationName} {role}></OrgNameDropDownDetail>
+			<OrgNameDropDownDetail {organizationName} {role} bind:isOpen={isOpenOrgDropDown}></OrgNameDropDownDetail>
 		{/if}
 	</div>
 </div>

@@ -3,17 +3,18 @@
 	import OrgNameDropDown from './OrgNameDropDown.svelte';
 	import LeftSideSection, { type SectionLinkProps } from './LeftSideSection.svelte';
 	import type { LayoutProps } from './$types';
+	import OrgDetailOverlay from './OrganizationDetail/OrgDetailOverlay.svelte';
+	import { setContext } from 'svelte';
 	
-
-
 	let { children, data }: LayoutProps = $props();
 	const dashboardPrefix = '/dashboard';
+	const orgDetailOverlay = $state({isShown: false})
+	setContext("orgOverlay", orgDetailOverlay)
 
 	const customerSupportLinks: SectionLinkProps[] = [
 		{ icon: Inbox, text: 'Conversations', href: `${dashboardPrefix}/conversations` },
 		{ icon: LibraryBig, text: 'Knowledge Base', href: `${dashboardPrefix}/knowledge-base` }
 	];
-
 	const configurationLinks: SectionLinkProps[] = [
 		{
 			icon: Palette,
@@ -41,8 +42,13 @@
 		<LeftSideSection title="Account" links={accountLinks}></LeftSideSection>
 	</div>
 	<div class="bg-gray-200"></div>
+
 	<!-- Right section where each custom route is displayed -->
 	<div>
 		{@render children()}
 	</div>
 </main>
+{#if orgDetailOverlay.isShown}
+	<OrgDetailOverlay organization={data.organization} role={data.role}></OrgDetailOverlay>
+{/if}
+

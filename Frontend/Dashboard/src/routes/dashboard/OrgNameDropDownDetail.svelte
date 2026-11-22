@@ -1,8 +1,16 @@
 <script lang="ts">
 	import OrgHomeIcon from '#lib/ui/components/OrgHomeIcon.svelte';
 	import { Settings } from '@lucide/svelte';
+	import { getContext } from 'svelte';
 
-	let { organizationName, role }: { organizationName: string; role: string } = $props();
+	let {
+		organizationName,
+		role,
+		isOpen = $bindable()
+	}: { organizationName: string; role: string; isOpen: boolean } = $props();
+
+	let orgOverlay = getContext<{isShown: boolean}>("orgOverlay")
+
 </script>
 
 <section
@@ -18,6 +26,10 @@
 		</div>
 		<button
 			class="flex items-center gap-1.5 rounded-md border border-gray-300 p-1 text-gray-700 shadow-[2px_2px_4px_rgba(0,0,0,0.1)]"
+			onclick={() => {
+				orgOverlay.isShown = true;
+				isOpen = false;
+			}}
 		>
 			<Settings size={15}></Settings>
 			<span class="text-sm">Manage</span>
