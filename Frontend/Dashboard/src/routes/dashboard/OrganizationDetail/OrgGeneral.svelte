@@ -2,7 +2,8 @@
 	import { authClient } from '#lib/auth-client.ts';
 	import OrgHomeIcon from '#lib/ui/components/OrgHomeIcon.svelte';
 	import SpinningLoader from '#lib/ui/icons/SpinningLoader.svelte';
-
+	import { goto } from '$app/navigation';
+	import { resolve } from '$app/paths';
 	let {
 		organization,
 		role
@@ -25,9 +26,16 @@
 		isDeleting = true;
 
 		try {
-			await new Promise((resolve) => setTimeout(resolve, 2000));
+			const {error} = await authClient.organization.delete({
+                organizationId: organization.id
+            })
+            if (error) {
+                throw error
+            }
+            await goto(resolve("/"))
+
 		} catch (error) {
-			console.log('some error');
+			console.log(error);
 		} finally {
 			isDeleting = false;
 		}
