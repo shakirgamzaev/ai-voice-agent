@@ -1,10 +1,42 @@
+from collections.abc import Iterator
+from os import getenv
+from typing import Annotated
 from uuid import UUID
 
-from fastapi import FastAPI, HTTPException, status
-from pydantic import BaseModel, Field
+from fastapi import Depends, FastAPI, HTTPException, Response, status
+from psycopg.errors import ForeignKeyViolation
+from pydantic import BaseModel, EmailStr, Field, StringConstraints
+from sqlalchemy import func
+from sqlalchemy.exc import IntegrityError
+from sqlmodel import Session, create_engine, select
+
+from models.customer_user import CustomerUser
 
 
 app = FastAPI()
+database_url = getenv("DATABASE_URL")
+engine = create_engine(database_url, pool_pre_ping=True) if database_url else None
+
+
+def get_session() -> Iterator[Session]:
+    if engine is None:
+        raise HTTPException(status.HTTP_503_SERVICE_UNAVAILABLE, "Database is not configured")
+
+    with Session(engine) as session:
+        yield session
+
+
+class CustomerUserIn(BaseModel):
+    organization_id: str = Field(min_length=1)
+    email: EmailStr = Field(max_length=254)
+    name: Annotated[str, StringConstraints(strip_whitespace=True, min_length=1)]
+
+
+class CustomerUserResponse(BaseModel):
+    id: UUID
+    organization_id: str
+    email: str
+    name: str
 
 
 class MessageIn(BaseModel):
@@ -24,10 +56,13 @@ async def health() -> dict[str, str]:
     return {"status": "ok"}
 
 
+
 @app.post("/threads/{thread_id}/messages", status_code=status.HTTP_202_ACCEPTED)
 async def post_message(thread_id: str, message: MessageIn) -> MessageAccepted:
     # TODO: save the message, put the agent job on SQS, then return the message ID.
     raise HTTPException(status.HTTP_501_NOT_IMPLEMENTED, "Not implemented yet")
+
+
 
 
 @app.get("/messages/{message_id}/events")
@@ -36,3 +71,43 @@ async def stream_reply(message_id: UUID) -> None:
     raise HTTPException(status.HTTP_501_NOT_IMPLEMENTED, "Not implemented yet")
 
 
+
+
+
+# endpoint that creates a customer_user, which is any person on the internet who wants to reach customer support service for a particular organization. If the organization does not exist, the customer wont be able to talk to anybody. 
+@app.post(
+    "/customer_users/",
+    status_code=status.HTTP_201_CREATED,
+    responses={status.HTTP_200_OK: {"model": CustomerUserResponse}},
+)
+def create_customer_user(
+    body: CustomerUserIn,
+    response: Response,
+    session: Annotated[Session, Depends(get_session)],
+) -> CustomerUserResponse:
+    # Serialize lookups and inserts for the same organization and email until commit.
+    lock_key = f"customer_user:{body.organization_id}:{body.email}"
+    session.exec(select(func.pg_advisory_xact_lock(func.hashtextextended(lock_key, 0)))).one()
+
+    customer = session.exec(
+        select(CustomerUser)
+        .where(CustomerUser.organization_id == body.organization_id, CustomerUser.email == body.email)
+        .order_by(CustomerUser.id)
+        .limit(1)
+    ).first()
+    if customer is None:
+        customer = CustomerUser(**body.model_dump())
+        session.add(customer)
+    else:
+        response.status_code = status.HTTP_200_OK
+
+    customer_response = CustomerUserResponse.model_validate(customer, from_attributes=True)
+    try:
+        session.commit()
+    except IntegrityError as error:
+        session.rollback()
+        if isinstance(error.orig, ForeignKeyViolation):
+            raise HTTPException(status.HTTP_404_NOT_FOUND, "Organization not found") from error
+        raise
+
+    return customer_response
