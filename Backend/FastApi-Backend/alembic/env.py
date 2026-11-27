@@ -6,16 +6,18 @@ from alembic.autogenerate.api import AutogenContext
 from sqlalchemy import create_engine, pool
 from sqlalchemy.engine import make_url
 from sqlalchemy.schema import SchemaItem
+from sqlmodel import SQLModel
 from sqlmodel.sql.sqltypes import AutoString
 
-from models.customer_user import CustomerUser
+# Import the models to register their tables with SQLModel.
+from models.db import customer_session, message  # pylint: disable=unused-import
 
 config = context.config
 
 if config.config_file_name is not None:
     fileConfig(config.config_file_name)
 
-target_metadata = CustomerUser.metadata
+target_metadata = SQLModel.metadata
 
 
 def include_name(

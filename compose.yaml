@@ -22,11 +22,27 @@ services:
     pull_policy: never
     env_file:
       - ./Backend/FastApi-Backend/.docker.env
+    environment:
+      REDIS_URL: redis://redis:6379/0
     ports:
       - "127.0.0.1:8000:8000"
     depends_on:
       postgres-db:
         condition: service_healthy
 
+  redis:
+    image: redis:8.12.0
+    command: ["redis-server", "--appendonly", "yes"]
+    ports:
+      - "127.0.0.1:5100:6379"
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
 volumes:
   postgres-data:
+  redis-data:

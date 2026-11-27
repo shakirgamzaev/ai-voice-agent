@@ -23,6 +23,7 @@ RUN useradd --system --user-group --create-home fastapi
 COPY --from=dependencies /app/.venv ./.venv
 COPY main.py alembic.ini ./
 COPY models/ ./models/
+COPY utils/ ./utils/
 COPY alembic/ ./alembic/
 
 USER fastapi
