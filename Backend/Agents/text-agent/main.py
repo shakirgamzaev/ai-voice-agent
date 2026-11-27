@@ -1,20 +1,47 @@
 import asyncio
+import json
+import os
+from typing import TYPE_CHECKING
 
-from agents import Agent, Runner
+import boto3
+from agents import Agent, Runner, set_default_openai_key
 from openai.types.responses import ResponseTextDeltaEvent
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator
 
+if TYPE_CHECKING:
+    from mypy_boto3_secretsmanager import SecretsManagerClient
 
 class MessageBody(BaseModel):
-    text: str
-
+    text: str = Field(pattern=r"\S")
 
 class SqsRecord(BaseModel):
-    body: str
+    body: MessageBody
 
+    @field_validator("body", mode="before")
+    @classmethod
+    def parse_body(cls, body: object) -> MessageBody:
+        if not isinstance(body, str):
+            raise ValueError("SQS record body must be a string")
+        if body.lstrip().startswith("{"):
+            return MessageBody.model_validate_json(body)
+        return MessageBody(text=body)
 
 class SqsEvent(BaseModel):
     records: list[SqsRecord] = Field(alias="Records")
+
+
+secret_name = os.getenv("OPENAI_API_KEY")
+if not secret_name:
+    try:
+        print("fetching from secrets manager")
+        secrets_client: SecretsManagerClient = boto3.client("secretsmanager")
+        secret = secrets_client.get_secret_value(SecretId="openai_api_key")
+        api_key = json.loads(secret["SecretString"])["openai_api_key"]
+        set_default_openai_key(api_key)
+    except Exception as e:
+        print(e)
+        raise e
+
 
 
 # Reuse the event loop and the SDK's HTTP connections across warm invocations.
@@ -35,8 +62,7 @@ async def stream_replies(sqs_event: SqsEvent) -> None:
     )
 
     for record in sqs_event.records:
-        user_text = MessageBody.model_validate_json(record.body).text
-        result = Runner.run_streamed(agent, user_text)
+        result = Runner.run_streamed(agent, record.body.text)
 
         async for event in result.stream_events():
             if event.type == "raw_response_event" and isinstance(event.data, ResponseTextDeltaEvent):
@@ -45,6 +71,8 @@ async def stream_replies(sqs_event: SqsEvent) -> None:
         print(flush=True)
 
 
-def lambda_handler(event: dict[str, object], context) -> None:
+def lambda_handler(event: dict[str, object], context: object) -> None:
     sqs_event = SqsEvent.model_validate(event)
+    # Lambda deletes the SQS records only after this handler returns successfully.
     async_runner.run(stream_replies(sqs_event))
+    
